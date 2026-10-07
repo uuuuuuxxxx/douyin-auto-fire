@@ -16,6 +16,7 @@ async def test_search_failure_raises_without_page_text_or_real_name(monkeypatch)
     monkeypatch.setattr("app.douyin.first_visible", AsyncMock(return_value=search))
     chat = DouyinChat(page)
     chat._search_result = AsyncMock(return_value=None)
+    page.get_by_text.return_value.count = AsyncMock(return_value=0)
 
     with pytest.raises(PageOperationError, match="搜索不到目标好友") as exc_info:
         await chat._open_target_once("张三")

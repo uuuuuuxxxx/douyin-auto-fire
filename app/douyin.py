@@ -49,6 +49,16 @@ class DouyinChat:
 
         result = await self._search_result(name)
         if result is None:
+            # Unicode nicknames can exist in conversations but return no search
+            # results. Exit search and reuse the same exact-name matching and
+            # chat-title confirmation instead of choosing a partial match.
+            await search.fill("")
+            cancel = self.page.get_by_text("取消", exact=True)
+            if await cancel.count() and await cancel.first.is_visible():
+                await cancel.first.click()
+            await self.page.wait_for_timeout(500)
+            result = await self._search_result(name)
+        if result is None:
             raise PageOperationError("搜索不到目标好友")
         await result.click(force=True)
         await self._confirm_opened(name)
