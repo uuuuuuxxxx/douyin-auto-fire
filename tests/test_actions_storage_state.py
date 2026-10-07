@@ -76,13 +76,13 @@ def test_rejects_invalid_compressed_state_without_exposing_it(tmp_path, raw):
 def test_upload_and_restore_state_larger_than_one_secret(tmp_path, monkeypatch):
     from scripts.upload_storage_state import upload
 
-    state = {"cookies": [{"name": "sessionid", "value": "PRIVATE_TEST_VALUE"}], "origins": [{"origin": "https://www.douyin.com", "localStorage": [{"name": "test", "value": random.Random(42).randbytes(45000).hex()}]}]}
+    state = {"cookies": [{"name": "sessionid", "value": "PRIVATE_TEST_VALUE"}], "origins": [{"origin": "https://www.douyin.com", "localStorage": [{"name": "test", "value": random.Random(42).randbytes(42000).hex()}]}]}
     path = tmp_path / "input.json"
     path.write_text(json.dumps(state), encoding="utf-8")
     uploaded = {}
 
     def capture(args, *, input, check):
-        assert len(input) <= 48_000
+        assert len(input) <= 34_000
         uploaded[args[3]] = input.decode()
 
     with monkeypatch.context() as patch:

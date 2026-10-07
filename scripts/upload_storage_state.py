@@ -15,7 +15,8 @@ def upload(path: Path, repository: str) -> None:
     raw = json.dumps(state, ensure_ascii=True, separators=(",", ":")).encode("utf-8")
     if len(raw) > 16 * 1024 * 1024:
         raise SystemExit("登录状态超过 16 MB，尚未上传")
-    limit = 48_000
+    # Leave room for encrypted/base64 payload overhead at the GitHub API.
+    limit = 34_000
     if len(raw) <= limit:
         first, second = raw, b""
     else:
