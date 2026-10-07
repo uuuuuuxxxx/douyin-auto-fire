@@ -161,10 +161,10 @@ Windows 上生成并上传（不会发送消息）：
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\login.py --channel msedge
-cmd /c 'gh secret set DOUYIN_STORAGE_STATE --repo 你的账号/douyin-auto-fire < storage-state.json'
+.\.venv\Scripts\python.exe scripts\upload_storage_state.py --repo 你的账号/douyin-auto-fire
 ```
 
-扫码成功后，在运行登录脚本的终端按 Enter。凭证只上传到仓库 Secret，不能提交到 Git。完整状态也无法保证避免抖音对 GitHub 运行环境的安全限制，仍需要真实发送验证。
+扫码成功后，在运行登录脚本的终端按 Enter。上传脚本需要已登录的 GitHub CLI；状态较大时自动压缩并分为 `DOUYIN_STORAGE_STATE` 和 `DOUYIN_STORAGE_STATE_PART2`，Actions 自动还原。凭证只上传到仓库 Secret，不能提交到 Git。完整状态也无法保证避免抖音对 GitHub 运行环境的安全限制，仍需要真实发送验证。
 
 ### 5.1 添加 `DOUYIN_COOKIE`
 
