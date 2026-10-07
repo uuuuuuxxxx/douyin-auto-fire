@@ -40,7 +40,9 @@ jobs:
       - run: python -m playwright install --with-deps chromium
       - name: Write protected configuration
         shell: bash
-        run: printf '%s' "$DOUYIN_CONFIG" > config.json
+        env:
+          DOUYIN_FRIENDS: ${{ secrets.DOUYIN_FRIENDS }}
+        run: python scripts/prepare_actions_config.py
       - name: Write multi-account configuration
         shell: bash
         env:
