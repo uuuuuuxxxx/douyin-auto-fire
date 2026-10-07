@@ -157,6 +157,8 @@ New repository secret
 
 单账号还可以添加可选 Secret `DOUYIN_STORAGE_STATE`，保存扫码登录生成的浏览器状态，包含 Cookie、Local Storage 和 IndexedDB。配置后优先使用它；没有配置时继续使用 `DOUYIN_COOKIE`。此模式不可与多账号 Secrets 同时启用。
 
+单账号可通过可选 Secret `DOUYIN_FRIENDS` 单独更新好友名单，格式为 JSON 字符串数组，例如 `["好友甲", "好友乙"]`。配置后覆盖 `DOUYIN_CONFIG` 中的名单，保留消息、表情映射和发送间隔；重复名称只保留一次。单好友 `targets` 配置可扩展到多人，所有新增好友沿用该好友的消息模板。已有多好友各自消息时，只能选用已有好友，新增好友需先在 `DOUYIN_CONFIG` 中添加消息配置。没有此 Secret 时直接使用原配置。
+
 Windows 上生成并上传（不会发送消息）：
 
 ```powershell
