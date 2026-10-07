@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import argparse
 import sys
 from pathlib import Path
 
@@ -10,13 +11,14 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from playwright.async_api import async_playwright
+from app.browser import open_private_messages
 
 
 DOUYIN_URL = "https://www.douyin.com/"
 
-async def login() -> None:
+async def login(channel: str | None = None) -> None:
     async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch(headless=False)
+        browser = await playwright.chromium.launch(headless=False, channel=channel)
         context = await browser.new_context(locale="zh-CN")
         page = await context.new_page()
         await page.goto(DOUYIN_URL, wait_until="domcontentloaded")
@@ -25,7 +27,8 @@ async def login() -> None:
         await asyncio.to_thread(input)
         await page.goto(DOUYIN_URL, wait_until="domcontentloaded")
         await _verify_home_login(page)
-        await context.storage_state(path="storage-state.json.tmp")
+        await open_private_messages(page)
+        await context.storage_state(path="storage-state.json.tmp", indexed_db=True)
         await browser.close()
         Path("storage-state.json.tmp").replace("storage-state.json")
         print("登录状态已保存到 storage-state.json")
@@ -54,4 +57,7 @@ async def _verify_home_login(page) -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(login())
+    parser = argparse.ArgumentParser(description="扫码登录并保存浏览器登录状态")
+    parser.add_argument("--channel", choices=["chrome", "msedge"], default=None)
+    args = parser.parse_args()
+    asyncio.run(login(args.channel))

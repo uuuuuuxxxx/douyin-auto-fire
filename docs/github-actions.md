@@ -155,6 +155,17 @@ New repository secret
 | `DOUYIN_COOKIE` | Cookie-Editor 导出的完整 Cookie JSON | ✅ |
 | `DOUYIN_CONFIG` | 配置生成器生成的完整配置 JSON | ✅ |
 
+单账号还可以添加可选 Secret `DOUYIN_STORAGE_STATE`，保存扫码登录生成的浏览器状态，包含 Cookie、Local Storage 和 IndexedDB。配置后优先使用它；没有配置时继续使用 `DOUYIN_COOKIE`。此模式不可与多账号 Secrets 同时启用。
+
+Windows 上生成并上传（不会发送消息）：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\login.py --channel msedge
+cmd /c 'gh secret set DOUYIN_STORAGE_STATE --repo 你的账号/douyin-auto-fire < storage-state.json'
+```
+
+扫码成功后，在运行登录脚本的终端按 Enter。凭证只上传到仓库 Secret，不能提交到 Git。完整状态也无法保证避免抖音对 GitHub 运行环境的安全限制，仍需要真实发送验证。
+
 ### 5.1 添加 `DOUYIN_COOKIE`
 
 点击 **New repository secret**。

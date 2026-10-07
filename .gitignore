@@ -11,4 +11,5 @@ config/tasks.json
 config/tasks/
 config.json
 storage-state.json
+storage-state.json.tmp
 storage_state/
