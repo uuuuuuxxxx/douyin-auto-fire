@@ -109,6 +109,34 @@ jobs:
               encoding="utf-8",
           )
           PY
+      - name: Restore single-account browser login state
+        shell: bash
+        env:
+          SINGLE_ACCOUNT_STORAGE_STATE: ${{ secrets.DOUYIN_STORAGE_STATE }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          raw = os.environ.get("SINGLE_ACCOUNT_STORAGE_STATE", "")
+          if not raw:
+              print("未配置完整登录状态，继续使用 Cookie 登录")
+              raise SystemExit(0)
+          if Path("config/accounts.json").exists():
+              raise SystemExit("DOUYIN_STORAGE_STATE 只支持单账号，请勿与多账号配置同时使用")
+          try:
+              state = json.loads(raw)
+          except json.JSONDecodeError:
+              raise SystemExit("DOUYIN_STORAGE_STATE 不是有效 JSON") from None
+          if not isinstance(state, dict) or not isinstance(state.get("cookies"), list) or not isinstance(state.get("origins"), list):
+              raise SystemExit("DOUYIN_STORAGE_STATE 必须是包含 cookies 和 origins 的浏览器登录状态")
+          if not state["cookies"]:
+              raise SystemExit("DOUYIN_STORAGE_STATE 没有登录 Cookie，请重新扫码登录")
+          Path("storage-state.json").write_text(raw, encoding="utf-8")
+          Path("storage-state.json").chmod(0o600)
+          print("已恢复浏览器登录状态，本次优先使用该状态")
+          PY
       - name: Run
         shell: bash
         run: |
